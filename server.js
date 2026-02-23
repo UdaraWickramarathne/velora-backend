@@ -23,9 +23,13 @@ const swaggerDocument = YAML.load(join(__dirname, 'openapi.yaml'));
 // Load env vars
 dotenv.config();
 
+// Get base path from environment (for OpenChoreo deployment)
+const BASE_PATH = process.env.BASE_PATH || '';
+
 console.log(`[${new Date().toISOString()}] ========================================`);
 console.log(`[${new Date().toISOString()}] Starting Velora Wear API Server`);
 console.log(`[${new Date().toISOString()}] Environment: ${process.env.NODE_ENV || 'development'}`);
+console.log(`[${new Date().toISOString()}] Base Path: ${BASE_PATH || '(none)'}`);
 console.log(`[${new Date().toISOString()}] ========================================`);
 
 // Connect to database and seed admin
@@ -53,8 +57,8 @@ app.use((req, res, next) => {
 });
 
 // API Documentation
-console.log(`[${new Date().toISOString()}] Setting up API documentation at /api-docs`);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+console.log(`[${new Date().toISOString()}] Setting up API documentation at ${BASE_PATH}/api-docs`);
+app.use(`${BASE_PATH}/api-docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'Velora Wear API Documentation',
   customfavIcon: '/favicon.ico'
@@ -62,17 +66,17 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
 
 // Routes
 console.log(`[${new Date().toISOString()}] Registering API routes...`);
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/admin', adminRoutes);
+app.use(`${BASE_PATH}/api/auth`, authRoutes);
+app.use(`${BASE_PATH}/api/products`, productRoutes);
+app.use(`${BASE_PATH}/api/orders`, orderRoutes);
+app.use(`${BASE_PATH}/api/reviews`, reviewRoutes);
+app.use(`${BASE_PATH}/api/admin`, adminRoutes);
 console.log(`[${new Date().toISOString()}] All routes registered successfully`);
 
 // Basic route
-app.get('/', (req, res) => {
-  console.log(`[${new Date().toISOString()}] GET / - Root endpoint accessed`);
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+app.get(`${BASE_PATH}/`, (req, res) => {
+  console.log(`[${new Date().toISOString()}] GET ${BASE_PATH}/ - Root endpoint accessed`);
+  const baseUrl = `${req.protocol}://${req.get('host')}${BASE_PATH}`;
   res.json({ 
     message: 'Welcome to Velora Wear API',
     documentation: `${baseUrl}/api-docs`,
@@ -88,9 +92,9 @@ app.get('/', (req, res) => {
 });
 
 // API info route
-app.get('/api', (req, res) => {
-  console.log(`[${new Date().toISOString()}] GET /api - API info endpoint accessed`);
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+app.get(`${BASE_PATH}/api`, (req, res) => {
+  console.log(`[${new Date().toISOString()}] GET ${BASE_PATH}/api - API info endpoint accessed`);
+  const baseUrl = `${req.protocol}://${req.get('host')}${BASE_PATH}`;
   res.json({ 
     message: 'Velora Wear API',
     version: '1.0.0',
@@ -155,8 +159,8 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`[${new Date().toISOString()}] ========================================`);
-  console.log(`[${new Date().toISOString()}] ✓ Server running on http://localhost:${PORT}`);
-  console.log(`[${new Date().toISOString()}] ✓ API Documentation: http://localhost:${PORT}/api-docs`);
+  console.log(`[${new Date().toISOString()}] ✓ Server running on http://localhost:${PORT}${BASE_PATH}`);
+  console.log(`[${new Date().toISOString()}] ✓ API Documentation: http://localhost:${PORT}${BASE_PATH}/api-docs`);
   console.log(`[${new Date().toISOString()}] ✓ Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`[${new Date().toISOString()}] ========================================`);
   console.log(`[${new Date().toISOString()}] Server is ready to accept requests`);
