@@ -2,12 +2,6 @@
 
 Backend API for Velora Wear clothing shop built with Express.js and MongoDB.
 
-## Installation
-
-```bash
-npm install
-```
-
 ## Configuration
 
 Create a `.env` file in the root directory with the following variables:
