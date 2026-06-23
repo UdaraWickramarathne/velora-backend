@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import connectDatabase from './config/database.js';
 import createAdminUser from './scripts/seedAdmin.js';
+import seedProducts from './scripts/seedProducts.js';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 import orderRoutes from './routes/orders.js';
@@ -34,6 +35,8 @@ connectDatabase().then(() => {
   console.log(`[${new Date().toISOString()}] Database connected successfully`);
   console.log(`[${new Date().toISOString()}] Seeding admin user...`);
   createAdminUser();
+  console.log(`[${new Date().toISOString()}] Seeding products...`);
+  seedProducts();
 }).catch((error) => {
   console.error(`[${new Date().toISOString()}] Database connection failed:`, error.message);
   process.exit(1);
